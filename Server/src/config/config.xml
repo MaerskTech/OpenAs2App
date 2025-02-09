@@ -197,6 +197,12 @@
               port="$properties.module.HealthCheckModule.port$"
               ssl_keystore="$properties.module.HealthCheckModule.ssl_keystore$"
               ssl_keystore_password="$properties.module.HealthCheckModule.ssl_keystore_password$"/>
+      <module enabled="true"
+              classname="org.openas2.processor.sender.ActiveMQSenderModule"
+              brokerUrl="ssl://sq1104-broker-shared-cdt-westeurope-azure.relaystream.maerskdev.net:443"
+              destinationName="rs.dev.shared.deconedi.q.order"
+              userName="deconedi-amq-user"
+              password="^bJ8xV6OYFA&amp;eBn"/>
    </processor>
    <!-- The pollerConfigBase provides the base config for the partnership directory pollers. It must be placed at the top of the file -->
    <pollerConfigBase classname="org.openas2.processor.receiver.AS2DirectoryPollingModule"

@@ -1,16 +1,16 @@
 <partnerships>
     <partner name="MyCompany"
-             as2_id="MyCompany_OID"
+             as2_id="MyCompanyOID"
              x509_alias="mycompany"
              email="as2msgs@openas2.com"/>
 
     <partner name="PartnerA"
-             as2_id="PartnerA_OID"
+             as2_id="PartnerAOID"
              x509_alias="partnera"
              email="as2msgs@partnera.com"/>
 
     <partner name="PartnerB"
-             as2_id="PartnerB_OID"
+             as2_id="PartnerBOID"
              x509_alias="partnerb"
              email="as2msgs@partnerb.com"/>
 

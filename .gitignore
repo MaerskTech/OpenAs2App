@@ -16,3 +16,5 @@ pom.xml.versionsBackup
 **/.settings
 **/*.class
 .metadata/*
+
+Server/src/data
