@@ -9,7 +9,9 @@ RUN rm -f Server/dist/*
 RUN rm -f Remote/dist/*
 RUN rm -f Bundle/dist/*
 RUN ./mvnw clean package
+RUN ls -la && sleep 50
 RUN mkdir ./Runtime && unzip Server/dist/OpenAS2Server-*.zip -d Runtime
+# RUN mkdir ./Runtime && unzip Server/target/openas2-server-*.jar -d Runtime
 RUN ./mvnw clean
 COPY start-container.sh /usr/src/openas2/Runtime/bin/
 RUN cd /usr/src/openas2/Runtime/bin && \

@@ -14,9 +14,9 @@ services:
       - OPENAS2PROP_RESTAPI__COMMAND__PROCESSOR__ENABLED=true
     tty: true
     stdin_open: true
-    volumes:
-      - ./config:/opt/openas2/config:rw
-      - ./data:/opt/openas2/data:rw
+    volumes: []
+      # - ./config:/opt/openas2/config:rw
+      # - ./data:/opt/openas2/data:rw
 
 
   openas2_webui:
@@ -29,6 +29,7 @@ services:
       - ${HOST_WEBUI_PORT:-8080}:80
     tty: true
     stdin_open: true
+
 volumes:
   config:
   data:

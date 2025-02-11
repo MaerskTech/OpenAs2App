@@ -18,3 +18,7 @@ pom.xml.versionsBackup
 .metadata/*
 
 Server/src/data
+PartnerA
+Server/src/config/openas2-server.crt
+Server/src/config/ssl_trust_certs.p12
+certificate.sh

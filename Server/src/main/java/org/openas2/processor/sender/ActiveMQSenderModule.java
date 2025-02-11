@@ -2,11 +2,9 @@ package org.openas2.processor.sender;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Base64;
-
 import jakarta.mail.internet.MimeBodyPart;
 import org.openas2.OpenAS2Exception;
 import org.openas2.message.Message;
@@ -14,21 +12,15 @@ import org.openas2.processor.ProcessorModule;
 import org.openas2.processor.ActiveModule;
 import org.openas2.processor.Processor;
 import org.openas2.processor.ProcessorException;
-
 import org.apache.activemq.transport.stomp.StompConnection;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLSocket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
 
 
 public class ActiveMQSenderModule implements ProcessorModule, Processor {
-
     // Configuration attributes (set via config.xml)
     private String brokerUrl;
+    private String brokerPort;
     private String destinationName;
     private String userName;
     private String password;
@@ -39,7 +31,12 @@ public class ActiveMQSenderModule implements ProcessorModule, Processor {
 
     // Setters corresponding to the attributes in config.xml
     public void setBrokerUrl(String brokerUrl) {
+        System.out.println("----------------------------*******************------------------------brokerUrl: " + brokerUrl);
         this.brokerUrl = brokerUrl;
+    }
+
+    public void setbrokerPort(String brokerPort) {
+        this.brokerPort = brokerPort;
     }
 
     public void setDestinationName(String destinationName) {
@@ -61,6 +58,15 @@ public class ActiveMQSenderModule implements ProcessorModule, Processor {
     @Override
     public void handle(String command, Message msg, Map<String, Object> options) throws ProcessorException {
         try {
+            // Check if the message has already been processed.
+            String alreadySent = msg.getAttribute("sentToQueue");
+            if ("true".equalsIgnoreCase(alreadySent)) {
+                System.out.println("--------------SKIP-----------------SKIP-------------------Message already sent to queue. Skipping duplicate processing.");
+                return;
+            }
+            // Mark the message as sent
+            msg.setAttribute("sentToQueue", "true");
+            
             // Convert msg.getData() from MimeBodyPart to byte array
             MimeBodyPart mbp = (MimeBodyPart) msg.getData();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -161,13 +167,25 @@ public class ActiveMQSenderModule implements ProcessorModule, Processor {
     // Helper method
     // ---------------------------
     
-    public static void sendFileToQueue(byte[] fileContent) throws Exception {
-        String  brokerUrl = "sq1104-broker-shared-cdt-westeurope-azure.relaystream.maerskdev.net";
-        String  destinationName = "rs.dev.shared.deconedi.t.order";
-        String  userName = "deconedi-amq-user";
-        String  password = "^bJ8xV6OYFA&eBn";
-        int brokerPort = 443;
+    public void sendFileToQueue(byte[] fileContent) throws Exception {
+        // String  brokerUrl = "sq1104-broker-shared-cdt-westeurope-azure.relaystream.maerskdev.net";
+        // String  destinationName = "rs.dev.shared.deconedi.t.order";
+        // String  userName = "deconedi-amq-user";
+        // String  password = "^bJ8xV6OYFA&eBn";
+        // int brokerPort = 443;
 
+        String brokerUrl = this.brokerUrl;
+        int brokerPort = Integer.parseInt(this.brokerPort);
+        String destinationName = this.destinationName;
+        String userName = this.userName;
+        String password = this.password;
+        
+        System.out.println("----------------------------*******************------------------------brokerUrl: " + brokerUrl);
+        System.out.println("----------------------------*******************------------------------destinationName: " + destinationName);
+        System.out.println("----------------------------*******************------------------------brokerPort: " + brokerPort);
+        System.out.println("----------------------------*******************------------------------userName: " + userName);
+        System.out.println("----------------------------*******************------------------------password: " + password);
+        
         // Create an SSLSocket using the default SSL socket factory.
         SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
         SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(brokerUrl, brokerPort);
@@ -182,6 +200,7 @@ public class ActiveMQSenderModule implements ProcessorModule, Processor {
 
         // Encode the file content in Base64 (since STOMP sends text messages).
         String encodedContent = Base64.getEncoder().encodeToString(fileContent);
+        System.out.println("Encoded file: " + encodedContent);
         System.out.println("Encoded file content length: " + encodedContent.length());
 
         // Send the message:
